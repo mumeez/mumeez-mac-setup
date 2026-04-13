@@ -353,6 +353,7 @@ current-mac-setup/
 
 This setup was heavily inspired by:
 
+- [Raycast](https://github.com/raycast) - App launcher, window management, keyboard shortcuts, and productivity (central to my setup!)
 - [dotfiles-latest](https://github.com/linkarzu/dotfiles-latest) - Comprehensive dotfiles by linkarzu
 - [LazyVim](https://github.com/LazyVim/LazyVim) - Neovim configuration
 - [Doom Emacs](https://github.com/doomemacs/doomemacs) - Emacs configuration

@@ -66,14 +66,11 @@ link_config() {
 
 link_config "$INSTALL_DIR/.zshrc" "$HOME/.zshrc"
 link_config "$INSTALL_DIR/.zprofile" "$HOME/.zprofile"
-link_config "$INSTALL_DIR/.amethyst.yml" "$HOME/.amethyst.yml"
 
 CONFIG_CONFIGS=(
     "aerospace:aerospace.toml"
     "btop:btop.conf"
-    "karabiner:karabiner.json"
     "kitty:kitty.conf"
-    "nvim"
     "opencode:config.toml"
     "sketchybar"
     "topgrade.toml"
@@ -102,33 +99,19 @@ for item in "${CONFIG_CONFIGS[@]}"; do
 done
 
 echo ""
-echo "==> Step 4: Setting up Doom Emacs..."
-echo "--------------------------------------------"
-if [ -d "$HOME/.config/emacs" ]; then
-    echo "  - Emacs config already exists at ~/.config/emacs"
-    echo "  - To use this config, either:"
-    echo "      1. Delete ~/.config/emacs and link to repo version"
-    echo "      2. Or manually copy: cp -r $INSTALL_DIR/.config/emacs/* ~/.config/emacs/"
-else
-    echo "  - Linking Doom Emacs config..."
-    ln -s "$INSTALL_DIR/.config/emacs" "$HOME/.config/emacs"
-fi
-
-echo ""
-echo "==> Step 5: Installing Node.js MCP packages..."
+echo "==> Step 4: Installing Node.js MCP packages..."
 echo "--------------------------------------------"
 if command -v npm &> /dev/null; then
     npm install -g @modelcontextprotocol/server-filesystem @modelcontextprotocol/server-github @modelcontextprotocol/server-playwright 2>/dev/null || true
 fi
 
 echo ""
-echo "==> Step 6: Enabling services..."
+echo "==> Step 5: Enabling services..."
 echo "--------------------------------------------"
 echo "  Run these manually to enable at login:"
 echo "    - AeroSpace: System Settings > Login Items > Add AeroSpace"
 echo "    - SketchyBar: Add to login items after testing"
-echo "    - Karabiner-Elements: Open app and grant permissions"
-echo "    - Amethyst: Add to login items (optional, use instead of AeroSpace)"
+echo "    - Raycast: Install from App Store or direct download, enable from Preferences"
 echo ""
 
 echo "============================================"
@@ -137,8 +120,9 @@ echo "============================================"
 echo ""
 echo "Next steps:"
 echo "  1. Log out and log back in (or restart)"
-echo "  2. Grant necessary permissions (Karabiner, Accessibility)"
+echo "  2. Grant necessary permissions (Accessibility for AeroSpace)"
 echo "  3. Open AeroSpace and configure in System Settings > Privacy"
 echo "  4. Run 'sketchybar' to start the status bar"
 echo "  5. Source your shell: source ~/.zshrc"
+echo "  6. Install Raycast and configure extensions"
 echo ""

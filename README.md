@@ -14,6 +14,7 @@ A comprehensive, production-ready macOS configuration for power users who want a
 - [What's Included](#whats-included)
   - [Shell & Terminal](#shell--terminal)
   - [Window Management](#window-management)
+  - [App Launcher](#app-launcher)
   - [Status Bar](#status-bar)
   - [Editors](#editors)
   - [AI & LLM Tools](#ai--llm-tools)
@@ -33,9 +34,10 @@ This repository contains my complete macOS development environment, including:
 - **Zsh** with Starship prompt, zoxide, and fuzzy finding
 - **AeroSpace** tiling window manager with vim-style keybindings
 - **SketchyBar** status bar with custom plugins
+- **Raycast** for app launching, window management, and keyboard shortcuts
 - **Neovim** (LazyVim) and **Doom Emacs** configurations
 - **AI/LLM integration** via Ollama, OpenCode, and MCP servers
-- **Custom keyboard remapping** via Karabiner-Elements
+- **Custom workflows** via Raycast extensions
 
 This setup is heavily inspired by the [dotfiles-latest](https://github.com/linkarzu/dotfiles-latest) repository and follows best practices for macOS ricing and customization.
 
@@ -94,8 +96,23 @@ The setup script will:
 | Tool | Description |
 |------|-------------|
 | **AeroSpace** | Tiling window manager (primary) |
-| **Amethyst** | Alternative tiling WM |
-| **Karabiner-Elements** | Keyboard remapping (Caps Lock → Hyper Key) |
+
+### App Launcher & Productivity
+
+| Tool | Description |
+|------|-------------|
+| **Raycast** | App launcher, window management, keyboard shortcuts, and much more |
+
+> **Note**: Raycast is central to my setup - it handles:
+> - App launching (replaces Spotlight)
+> - Window management (via AeroSpace integration)
+> - Custom keyboard shortcuts
+> - Clipboard history
+> - Snippets
+> - AI-powered search
+> - And 25+ custom extensions
+>
+> Raycast stores its configuration internally and doesn't use traditional config files. The extensions I use are stored in `~/.config/raycast/extensions/`.
 
 ### Status Bar
 
@@ -108,9 +125,8 @@ The setup script will:
 
 | Tool | Description |
 |------|-------------|
-| **Neovim** (LazyVim) | My primary editor |
-| **Doom Emacs** | Emacs configuration (in `.config/emacs`) |
-| **OpenCode** | AI coding assistant |
+| **Neovim** (LazyVim) | My primary editor - fully configured with LazyVim |
+| **Doom Emacs** | Emacs configuration (located in `~/.config/emacs`) |
 
 ### AI & LLM Tools
 
@@ -120,8 +136,9 @@ The setup script will:
 | **OpenCode** | AI coding with MCP servers |
 | **Claude** (desktop) | Anthropic's AI assistant |
 | **AnythingLLM** | Chat UI for local LLMs |
+| **Gemini CLI** | Google's Gemini CLI |
 
-**MCP Servers Configured**:
+**MCP Servers Configured** (in OpenCode):
 - `filesystem` - Local file access
 - `github` - GitHub API integration
 - `context7` - Real-time documentation
@@ -149,7 +166,6 @@ After running the automated setup, complete these manual steps:
 Open these apps and grant the requested permissions:
 
 ```bash
-open -a Karabiner-Elements
 open -a "System Settings" # Navigate to Privacy & Security > Accessibility
 ```
 
@@ -159,24 +175,34 @@ Add these to login items (System Settings > General > Login Items):
 
 - **AeroSpace** - Window manager
 - **SketchyBar** - Status bar
-- **Karabiner-Elements** - Keyboard remapping
+- **Raycast** - App launcher and productivity (set as default)
 
-### 3. Configure AeroSpace
+### 3. Configure Raycast
+
+```bash
+# Open Raycast
+open -a Raycast
+
+# Set Raycast as default launcher:
+# System Settings > Keyboard > Keyboard Shortcuts > Spotlight > Change Raycast
+```
+
+### 4. Configure AeroSpace
 
 ```bash
 # Open AeroSpace config
 open -a AeroSpace
+
+# Or edit: ~/.config/aerospace/aerospace.toml
 ```
 
-Or edit: `~/.config/aerospace/aerospace.toml`
-
-### 4. Start SketchyBar
+### 5. Start SketchyBar
 
 ```bash
 sketchybar
 ```
 
-### 5. Verify Shell
+### 6. Verify Shell
 
 ```bash
 source ~/.zshrc
@@ -201,11 +227,15 @@ nvim  # Test Neovim opens
 | `Alt + O` | Move workspace to next monitor |
 | `Alt + Shift + R` | Reload config |
 
-### Karabiner
+### Raycast
 
-| Key | Original | After Remap |
-|-----|----------|-------------|
-| `Caps Lock` | Caps Lock | `Ctrl + Alt + Cmd` (Hyper Key) |
+Raycast handles many keyboard shortcuts. Key ones include:
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd + Space` | Open Raycast (replaces Spotlight) |
+| `Cmd + Shift + H` | Hide window |
+| `Cmd + Shift + Left/Right` | Snap window |
 
 ### Zsh Aliases
 
@@ -248,8 +278,8 @@ description = "What it does"
 ### Modifying Keybindings
 
 - **AeroSpace**: Edit `~/.config/aerospace/aerospace.toml`
-- **Karabiner**: Edit `~/.config/karabiner/karabiner.json`
 - **Shell aliases**: Edit `~/.zshrc`
+- **Raycast**: Configure via Raycast preferences (Settings > Shortcuts)
 
 ---
 
@@ -305,15 +335,12 @@ current-mac-setup/
 ├── .config/              # App configurations
 │   ├── aerospace/        # Window manager
 │   ├── btop/             # System monitor
-│   ├── karabiner/        # Keyboard remapping
 │   ├── kitty/            # Terminal config
-│   ├── nvim/             # Neovim (LazyVim)
 │   ├── opencode/         # AI assistant config
 │   ├── sketchybar/       # Status bar
 │   └── topgrade.toml     # System updater config
 ├── .zshrc                # Shell config
 ├── .zprofile             # Login shell config
-├── .amethyst.yml         # Alternative window manager
 ├── Brewfile              # Homebrew packages
 ├── scripts/
 │   └── setup.sh          # Installation script
@@ -340,6 +367,7 @@ This setup was heavily inspired by:
 - [Homebrew Documentation](https://docs.brew.sh)
 - [AeroSpace Documentation](https://nikitabobko.github.io/aerospace/)
 - [SketchyBar GitHub](https://github.com/FelixKratz/SketchyBar)
+- [Raycast](https://raycast.com/)
 
 ---
 

@@ -1,0 +1,39 @@
+# Icon definitions for SketchyBar
+# Using Nerd Font icons since SF Pro can be inconsistent
+
+# Volume
+VOLUME_100=󰕾
+VOLUME_66=󰖀
+VOLUME_33=󰕿
+VOLUME_10=󰕿
+VOLUME_0=󰝟
+AIRPODS=󰟟
+HEADPHONES=󰋋
+
+# Wifi
+WIFI_CONNECTED=󰖩
+WIFI_DISCONNECTED=󰖪
+
+# Battery
+BATTERY_100=󰁹
+BATTERY_75=󰂀
+BATTERY_50=󰁾
+BATTERY_25=󰁼
+BATTERY_0=󰂎
+BATTERY_CHARGING=󰂄
+
+# Other
+CALENDAR=󰃭
+CLOCK=󰥔
+APPLE=󰀵
+PREFERENCES=󰒓
+ACTIVITY=󱓞
+LOCK=󰌾
+BLUETOOTH=󰂯
+RESTART=󰑓
+NETWORK_DOWN=󰇚
+NETWORK_UP=󰕒
+BRIGHTNESS_ICON=󰃟
+
+# Homebrew
+BREW=󰀓

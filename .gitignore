@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+_*
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Configs with secrets (uncomment and configure after copying)
+# .gitconfig
+# .config/opencode/config.toml (contains secrets - add your own PAT)
+# config.toml (contains secrets)
+
+# Environment
+.env
+.env.local
+
+# Secrets reference file (remove this line after configuring your secrets)
+# SEE config.toml for MCP server configuration
+

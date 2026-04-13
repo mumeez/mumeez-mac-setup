@@ -1,0 +1,56 @@
+# OpenCode MCP Configuration
+# Add tools to enhance your AI coding agent
+
+[mcp]
+enabled = true
+
+# File System - Local file access (non-negotiable for coding)
+[mcp.servers.filesystem]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-filesystem", "/Users/mumeez"]
+description = "Read/write files in your home directory"
+
+# GitHub - Full GitHub API integration
+# NOTE: You need to set your own GitHub PAT token
+[mcp.servers.github]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-github"]
+description = "Manage repos, issues, PRs, code search"
+# env = { GITHUB_PERSONAL_ACCESS_TOKEN = "YOUR_GITHUB_PAT_HERE" }
+
+# Context7 - Real-time documentation lookup
+[mcp.servers.context7]
+type = "remote"
+url = "https://mcp.context7.com/mcp"
+description = "Up-to-date docs for any coding question"
+
+# Exa - Web search for AI agents
+[mcp.servers.exa]
+type = "remote"
+url = "https://mcp.exa.ai/mcp"
+description = "Semantic web search for AI"
+
+# Sentry - Error tracking
+[mcp.servers.sentry]
+type = "remote"
+url = "https://mcp.sentry.dev/mcp"
+description = "Debug errors and monitor issues"
+
+# Playwright - Browser automation
+[mcp.servers.playwright]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-playwright"]
+description = "Browser automation and testing"
+
+# Brave Search - Web search
+# Requires: BRAVE_API_KEY environment variable
+# [mcp.servers.brave-search]
+# command = "npx"
+# args = ["-y", "@modelcontextprotocol/server-brave-search"]
+# description = "Web search"
+
+# E2B - Code execution sandbox
+# [mcp.servers.e2b]
+# type = "remote"
+# url = "https://mcp.e2b.dev"
+# description = "Run code in secure sandboxes"

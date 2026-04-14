@@ -1,8 +1,12 @@
-# Mumeez's macOS Setup
+<div align=center>
+
+#  nerd_font_mumeez's macOS Setup  nerd_font
 
 A comprehensive, production-ready macOS configuration for power users who want a highly customized terminal-driven workflow with AI integration, window management, and a beautiful status bar.
 
 > **Note**: This is a macOS-specific setup. For Linux configurations, see my [dotfiles-latest](https://github.com/linkarzu/dotfiles-latest) repository.
+
+</div>
 
 ---
 

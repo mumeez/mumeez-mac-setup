@@ -30,7 +30,7 @@ local STYLE = {
 	chip_border = colors.black, -- Border color for workspace chips
 	chip_height = 26, -- Height of workspace chips
 	bracket_border = colors.bg2, -- Border color for workspace brackets
-	active_icon_highlight = colors.red, -- Highlight color for active workspace icon
+	active_icon_highlight = 0xff37F499, -- Highlight color for active workspace icon
 	active_label_highlight = colors.white, -- Highlight color for active workspace label
 	inactive_icon_color = colors.white, -- Color for inactive workspace icons
 	inactive_label_color = colors.grey, -- Color for inactive workspace labels
@@ -66,15 +66,19 @@ local function create_workspace_item(ws)
 		position = "left",
 		display = display, -- Pin this chip to its designated monitor
 		icon = {
-			font = { family = settings.font.numbers },
+			font = { 
+				family = "SF Pro",
+				style = "Bold",
+				size = 13.5,
+			},
 			string = ws, -- Display the workspace name/letter
-			padding_left = 15,
-			padding_right = 8,
+			padding_left = 6,
+			padding_right = 6,
 			color = STYLE.inactive_icon_color,
 			highlight_color = STYLE.active_icon_highlight,
 		},
 		label = {
-			padding_right = 20,
+			padding_right = 8,
 			color = STYLE.inactive_label_color,
 			highlight_color = STYLE.active_label_highlight,
 			font = "sketchybar-app-font:Regular:16.0", -- Use app font for icons
@@ -187,8 +191,8 @@ local function update_workspace_appearance(ws, focused_workspace)
 		local app_icons_string = ""
 
 		-- Parse application names and build icon string
-		for app_name in string.gmatch(output or "", "[^\r\n]+") do
-			app_name = app_name:gsub("^%s+", ""):gsub("%s+$", "") -- Trim whitespace
+		for raw_app_name in string.gmatch(output or "", "[^\r\n]+") do
+			local app_name = raw_app_name:gsub("^%s+", ""):gsub("%s+$", "") -- Trim whitespace
 
 			-- Only add unique apps to avoid duplicate icons
 			if app_name ~= "" and not seen_apps[app_name] then
@@ -298,7 +302,8 @@ local function update_all_workspaces()
 					-- Check if workspace has any windows
 					sbar.exec("aerospace list-windows --workspace " .. ws, function(windows_output)
 						local has_windows = (windows_output and windows_output:match("%S")) ~= nil
-						local should_show = (ws == focused_workspace) or has_windows
+						local always_show = (ws == "1" or ws == "2" or ws == "3")
+						local should_show = (ws == focused_workspace) or has_windows or always_show
 
 						-- Update workspace visibility
 						set_workspace_visibility(ws, should_show)

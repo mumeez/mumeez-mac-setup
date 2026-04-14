@@ -7,19 +7,21 @@ local settings = require("settings")
 local COVER_SIZE = 26
 local COVER_SCALE = 0.04
 local COVER_RADIUS = 5
-local SHOW_ON_RIGHT = true
+local SHOW_ON_RIGHT = false
 local POLL_SECONDS = 2.0
-local STARTUP_DELAY = 0.5 -- avoid login race when launched by brew services
+local STARTUP_DELAY = 0.5 
 
 local function side()
 	return SHOW_ON_RIGHT and "right" or "left"
 end
 
--- temp artwork file (writable even when started by launchd)
+-- temp artwork file
 local ART_PATH = "/tmp/sketchybar_music_art.jpg"
 
 -- --- items ---------------------------------------------------------------
--- Cover first so text aligns right after it
+-- For LEFT position: order of creation is order of appearance (left to right)
+-- [Cover] [Title/Artist] [Prev] [PP] [Next]
+
 local cover = sbar.add("item", "widgets.music.cover", {
 	position = side(),
 	background = {
@@ -27,14 +29,19 @@ local cover = sbar.add("item", "widgets.music.cover", {
 		color = colors.transparent,
 		height = COVER_SIZE,
 	},
-	icon = { drawing = false },
+	icon = { 
+		string = "􀑪", 
+		font = { size = 14.0 },
+		color = colors.grey,
+		padding_left = 10,
+		padding_right = 10,
+	},
 	label = { drawing = false },
 	padding_left = 0,
 	padding_right = 6,
 	updates = true,
 })
 
--- Two-line stack (artist top, title bottom)
 local MAX_CHARS = 26
 
 local artist = sbar.add("item", "widgets.music.artist", {
@@ -42,54 +49,55 @@ local artist = sbar.add("item", "widgets.music.artist", {
 	width = 0, -- overlay
 	padding_left = -5,
 	padding_right = 0,
-	y_offset = -6, -- top line
+	y_offset = -6, 
 	icon = { drawing = false },
 	label = {
 		max_chars = MAX_CHARS,
 		align = "left",
-		font = { style = settings.font.style_map["Semibold"], size = 11 },
-		color = colors.grey,
+		font = { family = settings.font.numbers, style = settings.font.style_map["Bold"], size = 10 },
+		color = 0xffF3A34A,
 	},
 })
 
 local title = sbar.add("item", "widgets.music.title", {
 	position = side(),
 	padding_left = -5,
-	padding_right = 6,
-	y_offset = 6, -- bottom line
+	padding_right = 12, -- More space after text
+	y_offset = 6, 
 	icon = { drawing = false },
 	label = {
 		max_chars = MAX_CHARS,
 		align = "left",
-		font = { style = settings.font.style_map["Bold"], size = 13 },
-		color = colors.white,
+		font = { family = settings.font.numbers, style = settings.font.style_map["Bold"], size = 11 },
+		color = 0xff37F499,
 	},
 })
 
--- Controls
-local btn_next = sbar.add("item", "widgets.music.next", {
-	position = side(),
-	icon = { string = icons.media.forward, font = { size = 12.0 } },
-	label = { drawing = false },
-	padding_left = 2,
-	padding_right = 0,
-})
-local btn_pp = sbar.add("item", "widgets.music.pp", {
-	position = side(),
-	icon = { string = icons.media.play_pause, font = { size = 12.0 } },
-	label = { drawing = false },
-	padding_left = 2,
-	padding_right = 2,
-})
 local btn_prev = sbar.add("item", "widgets.music.prev", {
 	position = side(),
 	icon = { string = icons.media.back, font = { size = 12.0 } },
 	label = { drawing = false },
 	padding_left = 4,
-	padding_right = 2,
+	padding_right = 4,
 })
 
--- Chip bracket around (cover + texts + controls)
+local btn_pp = sbar.add("item", "widgets.music.pp", {
+	position = side(),
+	icon = { string = icons.media.play_pause, font = { size = 12.0 } },
+	label = { drawing = false },
+	padding_left = 4,
+	padding_right = 4,
+})
+
+local btn_next = sbar.add("item", "widgets.music.next", {
+	position = side(),
+	icon = { string = icons.media.forward, font = { size = 12.0 } },
+	label = { drawing = false },
+	padding_left = 4,
+	padding_right = 8,
+})
+
+-- Chip bracket
 sbar.add(
 	"bracket",
 	"widgets.music.bracket",
@@ -97,50 +105,28 @@ sbar.add(
 	{ background = { color = colors.bg1, border_color = colors.black, border_width = 1, height = 26 } }
 )
 
+-- Spacing after widget
 sbar.add("item", "widgets.music.padding", {
-	position = SHOW_ON_RIGHT and "right" or "left",
+	position = side(),
 	width = settings.group_paddings,
 })
 
--- --- actions --------------------------------------------------------------
-btn_prev:subscribe("mouse.clicked", function()
-	sbar.exec([[/usr/bin/osascript -e 'tell application "Music" to previous track']])
-end)
-btn_pp:subscribe("mouse.clicked", function()
-	sbar.exec([[/usr/bin/osascript -e 'tell application "Music" to playpause']])
-end)
-btn_next:subscribe("mouse.clicked", function()
-	sbar.exec([[/usr/bin/osascript -e 'tell application "Music" to next track']])
-end)
+-- --- actions ---
+btn_prev:subscribe("mouse.clicked", function() sbar.exec("nowplaying-cli previous") end)
+btn_pp:subscribe("mouse.clicked", function() sbar.exec("nowplaying-cli togglePlayPause") end)
+btn_next:subscribe("mouse.clicked", function() sbar.exec("nowplaying-cli next") end)
 
+local current_app = "Music"
 for _, it in ipairs({ cover, title, artist }) do
 	it:subscribe("mouse.clicked", function()
-		sbar.exec([[open -a "Music"]])
+		if current_app and current_app ~= "" then
+			sbar.exec([[open -a "]] .. current_app .. [["]])
+		else
+			sbar.exec([[open -a "Music"]])
+		end
 	end)
 end
 
--- --- AppleScript helpers (resilient) -------------------------------------
--- Return title, artist, player_state even if stopped/not running.
-local APPLESCRIPT_INFO = [[
-if application "Music" is running then
-  tell application "Music"
-    set ps to (player state as string)
-    if ps is "stopped" then
-      return "" & linefeed & "" & linefeed & ps
-    end if
-    try
-      set t to name of current track
-      set ar to artist of current track
-      return t & linefeed & ar & linefeed & ps
-    on error
-      return "" & linefeed & "" & linefeed & ps
-    end try
-  end tell
-end if
-return "" & linefeed & "" & linefeed & "not_running"
-]]
-
--- Writes current artwork to ART_PATH (returns "ok"/"")
 local APPLESCRIPT_ART = ([[
 if application "Music" is running then
   tell application "Music"
@@ -169,9 +155,7 @@ end if
 return ""
 ]]):format(ART_PATH)
 
--- --- rendering ------------------------------------------------------------
 local function ensure_visible()
-	-- only turn items on; do NOT touch labels
 	cover:set({ drawing = "on" })
 	btn_prev:set({ drawing = "on" })
 	btn_pp:set({ drawing = "on" })
@@ -182,55 +166,44 @@ end
 
 local function show_placeholder()
 	ensure_visible()
-	-- only use placeholders when we truly have no metadata
 	title:set({ label = { string = "—" } })
 	artist:set({ label = { string = "" } })
+	cover:set({ icon = { drawing = true }, background = { image = { string = "" } } })
 end
 
 local function refresh_once()
-	sbar.exec("/usr/bin/osascript -e '" .. APPLESCRIPT_INFO:gsub("'", [["]]) .. "'", function(meta)
-		if not meta then
-			show_placeholder()
-			return
+	sbar.exec("nowplaying-cli get title artist playerState bundleIdentifier", function(out)
+		if not out or out == "" then show_placeholder() return end
+
+		local lines = {}
+		for line in string.gmatch(out, "[^\r\n]+") do lines[#lines + 1] = line end
+		
+		local t, ar, st, bid = lines[1] or "", lines[2] or "", lines[3] or "stopped", lines[4] or ""
+		
+		if bid:find("com.apple.Music") then current_app = "Music"
+		elseif bid:find("com.spotify.client") then current_app = "Spotify"
+		elseif bid:find("com.google.Chrome") then current_app = "Google Chrome"
+		elseif bid:find("com.apple.Safari") then current_app = "Safari"
+		else current_app = nil end
+
+		title:set({ label = { string = (t ~= "null" and t ~= "" and t or "—") } })
+		artist:set({ label = { string = (ar ~= "null" and ar ~= "" and ar or "") } })
+
+		if current_app == "Music" then
+			sbar.exec("/usr/bin/osascript -e '" .. APPLESCRIPT_ART:gsub("'", [["]]) .. "'", function(ok)
+				if ok and ok:match("ok") then
+					cover:set({ icon = { drawing = false }, background = { image = { string = ART_PATH, scale = COVER_SCALE, corner_radius = COVER_RADIUS } } })
+				else
+					cover:set({ icon = { drawing = true }, background = { image = { string = "" } } })
+				end
+			end)
+		else
+			cover:set({ icon = { drawing = true }, background = { image = { string = "" } } })
 		end
-
-		local lines, i = {}, 0
-		for line in string.gmatch(meta, "[^\r\n]+") do
-			lines[#lines + 1] = line
-		end
-		local t = lines[1] or ""
-		local ar = lines[2] or ""
-		local st = lines[3] or "not_running"
-
-		-- Update texts (keep widget visible regardless of state)
-		title:set({ label = { string = (t ~= "" and t or "—") } })
-		artist:set({ label = { string = (ar ~= "" and ar or "") } })
-
-		-- Optionally change play/pause glyph by state (commented; keep static SF symbol)
-		-- if st == "playing" then btn_pp:set({ icon = { string = "􀊆" } }) else btn_pp:set({ icon = { string = "􀊄" } }) end
-
-		-- Try to fetch art; keep previous art on failure
-		sbar.exec("/usr/bin/osascript -e '" .. APPLESCRIPT_ART:gsub("'", [["]]) .. "'", function(ok)
-			if ok and ok:match("ok") then
-				cover:set({
-					background = {
-						height = COVER_SIZE,
-						image = { string = ART_PATH, scale = COVER_SCALE, corner_radius = COVER_RADIUS },
-					},
-				})
-			end
-			ensure_visible()
-		end)
+		ensure_visible()
 	end)
 end
 
-local function loop()
-	refresh_once()
-	sbar.delay(POLL_SECONDS, loop)
-end
-
--- small delay at login helps when started by brew services
+local function loop() refresh_once() sbar.delay(POLL_SECONDS, loop) end
 sbar.delay(STARTUP_DELAY, loop)
-
--- also refresh on wake
 cover:subscribe("system_woke", refresh_once)

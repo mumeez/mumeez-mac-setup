@@ -1,5 +1,10 @@
 #!/opt/homebrew/bin/lua
 
+-- Add the sketchybar-lua shared library and config to the search path
+local home = os.getenv("HOME")
+package.cpath = home .. "/.local/share/sketchybar_lua/?.so;" .. package.cpath
+package.path = home .. "/.config/sketchybar/?.lua;" .. home .. "/.config/sketchybar/?/init.lua;" .. package.path
+
 -- Load the sketchybar-package and prepare the helper binaries
 require("helpers")
 require("init")

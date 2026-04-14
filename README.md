@@ -1,147 +1,179 @@
 <div align="center">
 
-# 🚀 sketchybar-config
+# 🎨 SketchyBar Configuration
 
-**A sleek macOS status bar powered by [SketchyBar](https://github.com/FelixKratz/SketchyBar) with Aerospace integration**
+**A Tokyo Night-inspired SketchyBar setup for macOS with Aerospace integration**
 
-[![macOS](https://img.shields.io/badge/macOS-12%2B-F8F8F2?style=for-the-badge&logo=apple)](https://www.apple.com/macos/)
-[![SketchyBar](https://img.shields.io/badge/SketchyBar-Latest-FF79C6?style=for-the-badge)](https://github.com/FelixKratz/SketchyBar)
-[![Aerospace](https://img.shields.io/badge/Aerospace-win-F8F8F2?style=for-the-badge)](https://github.com/nikitabobko/AeroSpace)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-FFB86C?style=for-the-badge)](https://www.gnu.org/licenses/gpl-3.0)
+[![macOS](https://img.shields.io/badge/macOS-12%2B-000000?style=for-the-badge&logo=apple)](https://www.apple.com/macos/)
+[![SketchyBar](https://img.shields.io/badge/SketchyBar-Latest-4285F4?style=for-the-badge)](https://github.com/FelixKratz/SketchyBar)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=for-the-badge)](https://www.gnu.org/licenses/gpl-3.0)
+[![Stars](https://img.shields.io/github/stars/NoamFav/sketchybar?style=flat&label=stars)](https://github.com/NoamFav/sketchybar/stargazers)
+[![Fork](https://img.shields.io/github/forks/NoamFav/sketchybar?style=flat&label=forks)](https://github.com/NoamFav/sketchybar/network)
 
 </div>
 
 ---
 
-## 📸 Preview
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  ① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨    │ SLO 72°F  🌧️  │  🔋 100%  │  📶 MyWiFi   │
-└─────────────────────────────────────────────────────────────────────────────┘
-        ↑ your workspaces                 ↑ weather    ↑ battery    ↑ wifi
-```
-
----
-
-## ✨ Features
-
-| Feature | Description |
-|---------|-------------|
-| 🎨 **Tokyo Night** | Cyberpunk-inspired dark theme (🎭 `#1a1b26`, 🟣 `#bb9af7`, 🔵 `#7aa2f7`) |
-| 🖥️ **Workspace Indicators** | Dynamic aerospace integration showing apps per workspace |
-| 🌤️ **Weather Widget** | Real-time weather from wttr.in |
-| 📶 **WiFi Status** | Live network monitoring |
-| 🔋 **Battery** | Smart battery with charging indicator |
-| ⌨️ **Custom Fonts** | SF Pro + Nerd Fonts for maximum Based Points™ |
-
----
-
-## 🚀 Quick Install
+## ⚡ Quick Install
 
 ```bash
-git clone https://github.com/mumeez/mumeez-mac-setup.git
-cd sketchybar-new
-
+git clone https://github.com/NoamFav/sketchybar.git
+cd sketchybar
 chmod +x install.sh
 ./install.sh
 ```
 
 ---
 
-## ⚙️ Configuration
+## 📸 Preview
 
-### Workspace Setup
+<p align="center">
+<img src="https://github.com/user-attachments/assets/YOUR_SCREENSHOT_FILENAME" width="800" alt="SketchyBar Preview"/>
+</p>
 
-Single monitor setup in `items/aerospace_workspaces.lua`:
+---
+
+## 🔍 Overview
+
+A personal **SketchyBar** configuration for **macOS**, designed to work seamlessly with **Aerospace** window manager. Built on Felix Kratz's excellent SbarLua framework, with Tokyo Night theming, custom widgets, and multi-monitor workspace integration.
+
+### ✨ Key Features
+
+| Feature | Description |
+| ------- | ---------- |
+| 🌙 **Tokyo Night Theme** | Beautiful dark colorscheme |
+| 🖥️ **Multi-Monitor** | Native Aerospace workspaces |
+| 📊 **Rich Widgets** | WiFi, battery, CPU, media, weather |
+| 🎨 **Custom Icons** | Extended app icon font |
+| ✈️ **Aerospace** | Pre-configured `.aerospace.toml` |
+
+---
+
+## 📋 Table of Contents
+
+- [Installation](#-installation)
+- [Required Customization](#-required-customization)
+- [Configuration Structure](#configuration-structure)
+- [Troubleshooting](#troubleshooting)
+- [Customization](#customization)
+- [Credits](#credits)
+
+---
+
+## 🔧 Installation
+
+### Prerequisites
+
+- **macOS 12+**
+- **Homebrew**
+- **Aerospace**
+- **Git**
+
+### Setup
+
+```bash
+git clone https://github.com/NoamFav/sketchybar.git
+cd sketchybar
+chmod +x install.sh
+./install.sh
+```
+
+The installer handles everything — dependencies, fonts, configuration, and restart.
+
+---
+
+## ⚙️ Required Customization
+
+> **Note:** Some settings are personalized. Update these for your setup.
+
+### Multi-Monitor Setup
+
+The workspace config in `aerospace_workspaces.lua` uses a 3-monitor layout:
 
 ```lua
 local WORKSPACE_LAYOUT = {
-    { display = 1, workspaces = { "1", "2", "3", "4", "5", "6", "7", "8", "9" } },
+	{ display = 3, workspaces = { "1", "2", "3", "4", "5", "6", "7", "8", "9" } }, -- left
+	{ display = 1, workspaces = { "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P" } }, -- middle
+	{ display = 2, workspaces = { "A", "S", "D", "F", "G", "Z", "X", "C", "V", "B" } }, -- right
 }
 ```
 
-### Weather Location
-
-Update in `items/widgets/weather.lua`:
-
-```lua
-sbar.exec([[curl -s 'https://wttr.in/San%20Luis%20Obispo?format=%t+%C' | tr -d '\n']], ...)
-```
+**Update for your setup:**
+- Change `display` numbers for your monitors
+- Update workspace names to match your Aerospace config
 
 ### WiFi Interface
 
 Find your interface:
-
 ```bash
 networksetup -listallhardwareports
 ```
+Update `items/wifi.lua` with your device (e.g., `en0`).
 
-Update in `items/widgets/wifi.lua` (currently `en0`).
+### Weather Location
 
----
-
-## 📁 File Structure
-
-```
-sketchybar/
-├── sketchybarrc              # ← entry point (load this in sketchybar)
-├── colors.lua               # Tokyo Night palette
-├── settings.lua             # Global styles
-├── init.lua                 # Framework loader
-├── items/
-│   ├── aerospace_workspaces.lua  # Workspace integration
-│   ├── wifi.lua               # WiFi widget
-│   ├── weather.lua            # Weather widget
-│   └── battery.lua            # Battery widget
-└── helpers/
-    └── app_icons.lua         # App icon mappings
-```
+Update location in `items/weather.lua`.
 
 ---
 
-## 🎯 Key Bindings
+## 📁 Configuration Structure
 
-| Action | Shortcut |
-|--------|----------|
-| Switch workspace | `aerospace workspace N` |
-| Move window | Right-click workspace |
+```
+~/.config/sketchybar/
+├── sketchybarrc              # Entry point
+├── colors.lua               # Tokyo Night colors
+├── settings.lua            # Global settings
+├── .aerospace.toml         # Aerospace config
+└── items/
+    ├── aerospace_workspaces.lua
+    ├── wifi.lua
+    ├── battery.lua
+    ├── cpu.lua
+    ├── weather.lua
+    └── ...
+```
 
 ---
 
 ## 🔧 Troubleshooting
 
-```bash
-# Restart sketchybar
-sketchybar --restart
+| Issue | Solution |
+| ----- | -------- |
+| Workspaces not showing | Update `WORKSPACE_LAYOUT` |
+| WiFi widget broken | Update interface in `wifi.lua` |
+| Font issues | Run `fc-cache -f` |
+| Permissions | Grant accessibility access |
 
-# View logs
-log stream --predicate 'subsystem == "com.felixkratz.sketchybar"'
+---
 
-# Test weather
-curl -s 'https://wttr.in/San%20Luis%20Obispo?format=%t+%C'
-```
+## 🎨 Customization
+
+| Change | File |
+| ------- | ----- |
+| Colors | `colors.lua` |
+| Fonts | `settings.lua` |
+| Widget behavior | `items/*.lua` |
 
 ---
 
 ## 🙏 Credits
 
-- **[FelixKratz](https://github.com/FelixKratz)** — SketchyBar & SbarLua
-- **[kvndrsslr](https://github.com/kvndrsslr/sketchybar-app-font)** — App icon font
-- **[Tokyo Night](https://github.com/folke/tokyonight.nvim)** — Colorscheme inspo
+- **[FelixKratz](https://github.com/FelixKratz)** — SketchyBar, SbarLua, and original dotfiles
+- **[kvndrsslr](https://github.com/kvndrsslr)** — sketchybar-app-font
+- **[Tokyo Night](https://github.com/folke/tokyonight.nvim)** — Color scheme
 
 ---
 
 ## 📜 License
 
-[GPL v3](LICENSE) — Free as in freedom.
+GPL v3 — see [LICENSE](LICENSE).
 
 ---
 
 <div align="center">
 
-**⌨️ Built with ☕ on macOS**
+**Built with ❤️ on macOS**
 
-*Tokyo Night aesthetic • Aerospace powered • Productivity enhanced*
+_Powered by SketchyBar • Inspired by Tokyo Night • Enhanced with Aerospace_
 
 </div>

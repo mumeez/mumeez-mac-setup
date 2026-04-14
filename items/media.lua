@@ -33,7 +33,7 @@ local media_artist = sbar.add("item", {
   label = {
     width = 0,
     font = { size = 9 },
-    color = colors.with_alpha(colors.white, 0.6),
+    color = 0xff37F499,
     max_chars = 18,
     y_offset = 6,
   },
@@ -50,6 +50,7 @@ local media_title = sbar.add("item", {
     width = 0,
     max_chars = 16,
     y_offset = -5,
+    color = 0xff37F499,
   },
 })
 
@@ -78,16 +79,16 @@ local function animate_detail(detail)
   if interrupt > 0 and (not detail) then return end
 
   sbar.animate("tanh", 30, function()
-    media_artist:set({ label = { width = detail and "dynamic" or 0 } })
-    media_title:set({ label = { width = detail and "dynamic" or 0 } })
+    media_artist:set({ label = { width = detail and "dynamic" or 0, color = 0xffff9e64 } })
+    media_title:set({ label = { width = detail and "dynamic" or 0, color = 0xff37F499 } })
   end)
 end
 
 media_cover:subscribe("media_change", function(env)
   if whitelist[env.INFO.app] then
     local drawing = (env.INFO.state == "playing")
-    media_artist:set({ drawing = drawing, label = env.INFO.artist, })
-    media_title:set({ drawing = drawing, label = env.INFO.title, })
+    media_artist:set({ drawing = drawing, label = { string = env.INFO.artist, color = 0xffff9e64 } })
+    media_title:set({ drawing = drawing, label = { string = env.INFO.title, color = 0xff37F499 } })
     media_cover:set({ drawing = drawing })
 
     if drawing then

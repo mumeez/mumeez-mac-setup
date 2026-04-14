@@ -9,8 +9,9 @@ local apple = sbar.add("item", {
   icon = {
     font = { size = 16.0 },
     string = icons.apple,
-    padding_right = 8,
-    padding_left = 8,
+    padding_right = 10,
+    padding_left = 10,
+    color = 0xffFF4040,
   },
   label = { drawing = false },
   background = {

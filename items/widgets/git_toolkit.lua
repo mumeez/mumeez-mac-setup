@@ -2,14 +2,14 @@ local colors = require("colors")
 local settings = require("settings")
 
 local TOOL_PREFIX = "widgets.git"
-local SCAN_SCRIPT = os.getenv("HOME") .. "/.config/sketchybar/helpers/git_toolkit/iskra_scan.sh"
+local SCAN_SCRIPT = os.getenv("HOME") .. "/.config/sketchybar/helpers/git_toolkit/git_scan.sh"
 local SCAN_CMD = '/bin/bash -l "' .. SCAN_SCRIPT .. '"'
 
 -- CHIP
 local chip = sbar.add("item", TOOL_PREFIX .. ".chip", {
 	position = "right",
 	icon = { string = "󰊤 ", font = { size = 14 } },
-	label = { string = "git", font = { style = settings.font.style_map["Bold"], size = 12 } },
+	label = { string = "git", font = { style = settings.font.style_map["Bold"], size = 12 }, color = 0xffF26CBC },
 	padding_left = 6,
 	padding_right = 6,
 	update_freq = 180,
@@ -141,6 +141,17 @@ local function add_repo_row(r)
 	row:subscribe("mouse.clicked", function(env)
 		if env.BUTTON == "left" then
 			open_in_terminal(r.path)
+		elseif env.BUTTON == "right" then
+			if r.slug and r.slug ~= "" and r.slug ~= r.name then
+				sbar.exec('open "https://github.com/' .. r.slug .. '"')
+			else
+				-- Try to get remote URL if slug is just the name
+				sbar.exec('git -C "' .. r.path .. '" remote get-url origin', function(url)
+					if url and url:find("github.com") then
+						sbar.exec('open "' .. url:gsub("git@github.com:", "https://github.com/"):gsub(".git$", "") .. '"')
+					end
+				end)
+			end
 		end
 	end)
 
@@ -180,8 +191,9 @@ local function refresh_chip()
 		chip:set({
 			label = {
 				string = dirty_cnt > 0 and (dirty_cnt .. "/" .. total) or (total .. " repos"),
+				color = 0xff37F499,
 			},
-			icon = { color = dirty_cnt > 0 and colors.yellow or colors.white },
+			icon = { color = dirty_cnt > 0 and colors.yellow or 0xff37F499 },
 		})
 	end)
 end
@@ -240,7 +252,7 @@ end)
 chip:subscribe({ "routine", "system_woke" }, refresh_chip)
 
 -- Spacing
-sbar.add("item", { position = "right", width = settings.group_paddings })
+sbar.add("item", { position = "left", width = settings.group_paddings })
 
 -- Initial
 refresh_chip()

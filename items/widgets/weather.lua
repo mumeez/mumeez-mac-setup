@@ -2,6 +2,9 @@
 local colors = require("colors")
 local settings = require("settings")
 
+-- Spacing before widget (to separate from item to its right)
+sbar.add("item", { position = "right", width = settings.group_paddings })
+
 -- === Compact chip (icon + temp) ===
 local weather = sbar.add("item", "widgets.weather", {
 	position = "right",
@@ -35,7 +38,7 @@ end
 local header = sbar.add("item", "widgets.weather.row.header", {
 	position = "popup." .. weather_bracket.name,
 	icon = { align = "left", width = 170, string = "—" }, -- city
-	label = { align = "right", width = 80, string = "—", max_chars = 6 }, -- "23°C"
+	label = { align = "right", width = 80, string = "—", max_chars = 6 }, -- "23°F"
 	width = 250,
 })
 
@@ -64,14 +67,16 @@ local h6 = add_row("widgets.weather.row.h6", "Next 6h", "—")
 
 -- === CHIP REFRESH (icon + temp)
 local function refresh_chip()
-	sbar.exec([[curl -s 'https://wttr.in/San Luis Obispo?format=%t+%C' | tr -d '\n']], function(out)
+	sbar.exec([[curl -s 'https://wttr.in/San%20Luis%20Obispo?format=%t+%C' | tr -d '\n']], function(out)
 		if not out or out == "" then
 			return
 		end
-		local temp, condition = out:match("([%+%-]?%d+°C)%s+(.+)")
+		local temp, condition = out:match("([%+%-]?%d+°[CF])%s+(.+)")
 		if not temp or not condition then
 			return
 		end
+		temp = temp:gsub("+", ""):gsub("°F", "")
+		temp = temp:gsub("^0", "")
 
 		local c = condition:lower()
 		local icon = "􀇃" -- cloud.sun
@@ -87,22 +92,22 @@ local function refresh_chip()
 			icon = "􀇂" -- cloud
 		end
 
-		weather:set({ icon = { string = icon }, label = { string = temp } })
+		weather:set({ icon = { string = icon }, label = { string = temp .. "°", color = 0xff37F499 } })
 	end)
 end
 
 -- === POPUP REFRESH (details) — harden PATH for jq when launched by services
 local function refresh_popup()
-	local url = "https://wttr.in/San Luis Obispo?format=j1"
+	local url = "https://wttr.in/San%20Luis%20Obispo?format=j1"
 	local cmd = [[/bin/bash -lc '
     export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
     curl -fsSL "]] .. url .. [[" | jq -r "
-      def h(i): .weather[0].hourly[i] | \"\\(.tempC)°C, \\(.weatherDesc[0].value)\";
+      def h(i): .weather[0].hourly[i] | \"\\(.tempF)°F, \\(.weatherDesc[0].value)\";
       [
         .nearest_area[0].areaName[0].value,         # city
-        .current_condition[0].temp_C,               # tempC (no unit)
+        .current_condition[0].temp_F,               # tempF
         .current_condition[0].weatherDesc[0].value, # condition
-        .current_condition[0].FeelsLikeC,           # feels
+        .current_condition[0].FeelsLikeF,           # feels
         .current_condition[0].humidity,             # humidity
         (.current_condition[0].windspeedKmph|tostring + \" km/h\"), # wind
         h(1), h(3), h(6)
@@ -122,16 +127,16 @@ local function refresh_popup()
 			return
 		end -- expect 9 fields
 
-		local city, tempC, desc, feelC, humP, windStr, n1, n3, n6 =
+		local city, tempF, desc, feelF, humP, windStr, n1, n3, n6 =
 			lines[1], lines[2], lines[3], lines[4], lines[5], lines[6], lines[7], lines[8], lines[9]
 
 		header:set({
 			icon = { string = city },
-			label = { string = tostring(tempC) .. "°C" },
+			label = { string = tostring(tempF) .. "°F" },
 		})
 		cond:set({ label = { string = desc } }) -- << fix: use :set
 
-		feels:set({ label = { string = tostring(feelC) .. "°C" } })
+		feels:set({ label = { string = tostring(feelF) .. "°F" } })
 		humidity:set({ label = { string = tostring(humP) .. "%" } })
 		wind:set({ label = { string = windStr } })
 		h1:set({ label = { string = n1 } })

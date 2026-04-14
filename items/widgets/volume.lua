@@ -10,7 +10,7 @@ local volume_percent = sbar.add("item", "widgets.volume1", {
   label = {
     string = "??%",
     padding_left = -1,
-    font = { family = settings.font.numbers }
+    font = { family = "SF Pro", style = "Bold" }
   },
 })
 
@@ -87,7 +87,7 @@ volume_percent:subscribe("volume_change", function(env)
   end
 
   volume_icon:set({ label = icon })
-  volume_percent:set({ label = lead .. volume .. "%" })
+  volume_percent:set({ label = { string = lead .. volume .. "%", color = 0xff37F499 } })
   volume_slider:set({ slider = { percentage = volume } })
 end)
 

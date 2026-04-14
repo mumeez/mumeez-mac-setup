@@ -10,6 +10,7 @@ return {
 	magenta = 0xffbb9af7,
 	grey = 0xff565f89, -- comments/disabled
 	transparent = 0x00000000,
+	time_green = 0xff37F499, -- user's green from time
 
 	-- Bar / popups / backgrounds
 	bar = {

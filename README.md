@@ -1,10 +1,12 @@
 <div align=center>
 
-#  nerd_font_mumeez's macOS Setup  nerd_font
+#  mumeez's macOS Setup
 
-A comprehensive, production-ready macOS configuration for power users who want a highly customized terminal-driven workflow with AI integration, window management, and a beautiful status bar.
+A comprehensive, production-ready macOS configuration for users who want a highly customized terminal-driven workflow with AI integration, window management, and a beautiful status bar.
 
-> **Note**: This is a macOS-specific setup. For Linux configurations, see my [dotfiles-latest](https://github.com/linkarzu/dotfiles-latest) repository.
+<img width="1470" height="956" alt="Screenshot 2026-04-13 at 10 47 24 PM" src="https://github.com/user-attachments/assets/28177ed3-4b07-4302-b534-060f8e785841" />
+
+> **Note**: This is a macOS-specific setup. 
 
 </div>
 

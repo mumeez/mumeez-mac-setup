@@ -20,15 +20,9 @@ local minimal = os.getenv("SKETCHYBAR_MINIMAL") == "1"
 -- Workspace layout configuration
 -- Display mapping: 3 = left monitor, 1 = middle monitor, 2 = right monitor
 -- Each workspace will only appear on its designated monitor's bar
-local WORKSPACE_LAYOUT = minimal
-		and {
-			{ display = 1, workspaces = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" } },
-		}
-	or {
-		{ display = 2, workspaces = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" } },
-		{ display = 1, workspaces = { "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P" } },
-		{ display = 3, workspaces = { "A", "S", "D", "F", "G", "Z", "X", "C", "V", "B" } },
-	}
+local WORKSPACE_LAYOUT = {
+	{ display = 1, workspaces = { "1", "2", "3", "4", "5", "6", "7", "8", "9" } },
+}
 
 -- Visual styling constants
 local STYLE = {

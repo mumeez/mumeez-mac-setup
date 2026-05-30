@@ -1,0 +1,61 @@
+# tmux integration - send save-buffer command
+keybind = cmd+s=text:\x01\x73
+
+# tmux prefix to toggle zoom on current pane
+keybind = cmd+b=text:\x01\x7a
+
+# theme colors (GitHub Dark inspired - matching Kitty)
+background = #222437
+foreground = #ffffff
+cursor-color = #f94dff
+cursor-text = #0D1116
+
+# ANSI colors (matching Kitty active-theme.conf)
+palette = 0=#0D1116
+palette = 1=#f16c75
+palette = 2=#37f499
+palette = 3=#9ad900
+palette = 4=#987afb
+palette = 5=#fca6ff
+palette = 6=#04d1f9
+palette = 7=#ffffff
+palette = 8=#e58f2a
+palette = 9=#f16c75
+palette = 10=#37f499
+palette = 11=#9ad900
+palette = 12=#987afb
+palette = 13=#fca6ff
+palette = 14=#04d1f9
+palette = 15=#ffffff
+
+# selection
+selection-background = #e9b3fd
+selection-foreground = #ffffff
+
+# cursor
+cursor-style = block
+cursor-style-blink = true
+shell-integration-features = no-cursor
+
+# cursor trail shader
+custom-shader = shaders/cursor_warp.glsl
+custom-shader-animation = always
+
+# typography
+font-family = JetBrainsMono Nerd Font Mono
+font-size = 17
+font-thicken = true
+
+# scrollback (10MB limit)
+scrollback-limit = 10000000
+
+# shell with tmux auto-start
+# command = zsh --login -c "tmux attach 2>/dev/null || tmux new-session -s main || zsh"
+
+# window transparency
+background-opacity = 0.98
+
+# behavior
+macos-option-as-alt = right
+desktop-notifications = false
+confirm-close-surface = false

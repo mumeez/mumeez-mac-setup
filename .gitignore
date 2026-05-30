@@ -13,12 +13,16 @@ _*
 
 # Configs with secrets (uncomment and configure after copying)
 # .gitconfig
-# .config/opencode/config.toml (contains secrets - add your own PAT)
-# config.toml (contains secrets)
+# config.toml (contains secrets - add your own PAT)
+
+# OpenCode
+opencode/node_modules/
+opencode/package-lock.json
 
 # Environment
 .env
 .env.local
+.envrc
 
 # Secrets reference file (remove this line after configuring your secrets)
 # SEE config.toml for MCP server configuration

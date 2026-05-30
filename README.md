@@ -42,7 +42,8 @@ This repository contains my complete macOS development environment, including:
 - **SketchyBar** status bar with custom plugins
 - **Raycast** for app launching, window management, and keyboard shortcuts
 - **Neovim** (LazyVim) and **Doom Emacs** configurations
-- **AI/LLM integration** via Ollama, OpenCode, and MCP servers
+- **AI/LLM integration** via Ollama, OpenCode (with 7 specialized AI subagents), and MCP servers
+- **Ghostty** terminal with custom shader effects and tmux integration
 - **Custom workflows** via Raycast extensions
 
 This setup is heavily inspired by the [dotfiles-latest](https://github.com/linkarzu/dotfiles-latest) repository and follows best practices for macOS ricing and customization.
@@ -97,6 +98,8 @@ The setup script will:
 
 **Terminals**: Kitty, Ghostty
 
+> **Ghostty** features a custom cursor trail shader (`cursor_warp.glsl`), GitHub Dark inspired theme matching Kitty's palette, tmux integration keybindings, and block cursor with blink animation.
+
 ### Window Management
 
 | Tool | Description |
@@ -138,19 +141,33 @@ The setup script will:
 
 | Tool | Description |
 |------|-------------|
-| **Ollama** | Local LLM runtime |
-| **OpenCode** | AI coding with MCP servers |
+| **Ollama** | Local LLM runtime (Qwen 2.5 Coder 7B, DeepSeek Coder 6.7B) |
+| **OpenCode** | AI coding assistant with 7 specialized subagents + MCP servers |
 | **Claude** (desktop) | Anthropic's AI assistant |
 | **AnythingLLM** | Chat UI for local LLMs |
 | **Gemini CLI** | Google's Gemini CLI |
 
-**MCP Servers Configured** (in OpenCode):
-- `filesystem` - Local file access
-- `github` - GitHub API integration
-- `context7` - Real-time documentation
-- `exa` - Web search
-- `sentry` - Error tracking
-- `playwright` - Browser automation
+**OpenCode Agent System** — The orchestrator routes complex requests across 7 subagents:
+
+| Agent | Role |
+|-------|------|
+| `@code-reviewer` | Code quality, security audit, PR review (temp 0.1) |
+| `@debug-agent` | Bug investigation, root cause analysis (temp 0.2) |
+| `@test-writer` | Write and update tests (temp 0.2) |
+| `@macos-toolsmith` | SketchyBar, AeroSpace, system config changes (temp 0.3) |
+| `@web-researcher` | Documentation lookups, API research (temp 0.3) |
+| `@docs-writer` | README, inline docs, project documentation (temp 0.2) |
+| `@vault-curator` | Obsidian note management and vault organization (temp 0.2) |
+
+**Workflow example** — A feature request flows through: `@web-researcher` → implementation → `@code-reviewer` → `@test-writer` → `@docs-writer`. See [`opencode/agents/orchestrator.md`](opencode/agents/orchestrator.md) for all workflow patterns.
+
+**MCP Servers Configured** (in [`opencode/config.toml`](opencode/config.toml)):
+- `filesystem` — Local file access (read/write home directory)
+- `github` — GitHub API (repos, issues, PRs, code search)
+- `context7` — Real-time documentation lookup
+- `exa` — Semantic web search for AI agents
+- `sentry` — Error tracking and monitoring
+- `playwright` — Browser automation and testing
 
 ### CLI Utilities
 
@@ -257,6 +274,57 @@ Raycast handles many keyboard shortcuts. Key ones include:
 
 ---
 
+## OpenCode Agent System
+
+OpenCode orchestrates a team of specialized AI agents through its **orchestrator** — a primary agent that decomposes complex requests and delegates subtasks to the appropriate subagent via `@mentions`.
+
+### Architecture
+
+The orchestrator (`opencode/agents/orchestrator.md`) is the entry point for all work. It creates a plan, dispatches subagents, and synthesizes results into one coherent response.
+
+```
+User Request
+    │
+    ▼
+┌────────────────┐
+│  Orchestrator   │  Routes work, creates plans
+│  (default mode) │
+└────┬───────────┘
+     │
+     ├── @code-reviewer    ─── Code quality & PR review
+     ├── @debug-agent      ─── Bug investigation
+     ├── @test-writer      ─── Test writing
+     ├── @macos-toolsmith  ─── System config changes
+     ├── @web-researcher   ─── Research & lookups
+     ├── @docs-writer      ─── Documentation
+     └── @vault-curator    ─── Obsidian notes
+```
+
+### Standard Workflows
+
+| Request Type | Agent Pipeline |
+|---|---|
+| **Feature Development** | `@web-researcher` → build agent → `@code-reviewer` → `@test-writer` → `@docs-writer` |
+| **Bug Fix** | `@debug-agent` → fix → `@test-writer` (regression test) → `@code-reviewer` |
+| **macOS Config Change** | `@web-researcher` (find options) → `@macos-toolsmith` (apply) → `@vault-curator` (save) |
+| **Research & Save** | `@web-researcher` (gather) → `@vault-curator` (structure note) → `@docs-writer` (format) |
+
+### Configuration
+
+- **Agent definitions**: [`opencode/opencode.json`](opencode/opencode.json) — each agent has a `mode`, `color`, and `temperature`
+- **MCP servers**: [`opencode/config.toml`](opencode/config.toml) — tools available to all agents
+- **Agent prompts**: [`opencode/agents/`](opencode/agents/) — one markdown file per agent with role instructions and permission rules
+
+### Quick Start
+
+```bash
+# OpenCode uses the orchestrator by default
+oc "Add a fastfetch config section to the README"
+# The orchestrator will decide which subagents to involve
+```
+
+---
+
 ## Customization
 
 ### Changing the Theme
@@ -272,7 +340,7 @@ To change colors, edit or replace this file.
 
 ### Adding New MCP Servers
 
-Edit `~/.config/opencode/config.toml`:
+MCP servers provide tools that all OpenCode agents can use. Edit `~/.config/opencode/config.toml`:
 
 ```toml
 [mcp.servers.my-new-server]
@@ -280,6 +348,19 @@ command = "npx"
 args = ["-y", "@modelcontextprotocol/server-name"]
 description = "What it does"
 ```
+
+### Adding or Modifying Agents
+
+Agent behavior is defined in `opencode/opencode.json` and prompted in `opencode/agents/`:
+
+```bash
+# Add a new agent entry to opencode.json
+# Then create its markdown file in opencode/agents/
+nvim opencode/opencode.json
+nvim opencode/agents/my-new-agent.md
+```
+
+Key agent properties: `mode` (primary/subagent), `temperature` (0.1–0.3 typical), `color` (hex), and `permission` rules for tool access.
 
 ### Modifying Keybindings
 
@@ -338,19 +419,26 @@ open ~/Library/Logs/opencode.log
 
 ```
 current-mac-setup/
-├── .config/              # App configurations
-│   ├── aerospace/        # Window manager
-│   ├── btop/             # System monitor
-│   ├── kitty/            # Terminal config
-│   ├── opencode/         # AI assistant config
-│   ├── sketchybar/       # Status bar
-│   └── topgrade.toml     # System updater config
+├── aerospace/            # AeroSpace window manager config
+├── borders/              # Window border config
+├── btop/                 # System monitor config
+├── cava/                 # Audio visualizer config
+├── ghostty/              # Ghostty terminal + custom shaders
+│   ├── config            # Theme, keybindings, font settings
+│   └── shaders/          # GLSL cursor effect shaders
+├── kitty/                # Kitty terminal config
+├── opencode/             # AI coding assistant
+│   ├── opencode.json     # Agent definitions (orchestrator + 7 subagents)
+│   ├── config.toml       # MCP server connections
+│   ├── agents/           # 8 agent markdown files
+│   └── skills/           # Domain-specific skill files
+├── scripts/
+│   ├── setup.sh          # Installation script
+├── sketchybar/           # Status bar config + plugins
 ├── .zshrc                # Shell config
 ├── .zprofile             # Login shell config
-├── Brewfile              # Homebrew packages
-├── scripts/
-│   └── setup.sh          # Installation script
-└── README.md
+├── Brewfile              # Homebrew packages (brewfast fetch)
+└── topgrade.toml         # System updater config
 ```
 
 ---
@@ -385,5 +473,5 @@ MIT License - Feel free to use this as a starting point for your own setup!
 ---
 
 <div align="center">
-  <sub>Last updated: April 2026</sub>
+  <sub>Last updated: May 2026</sub>
 </div>

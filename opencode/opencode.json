@@ -1,0 +1,58 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "orchestrator",
+  "provider": {
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "http://localhost:11434/v1"
+      },
+      "models": {
+        "qwen2.5-coder:7b": {},
+        "deepseek-coder:6.7b": {}
+      }
+    }
+  },
+  "agent": {
+    "orchestrator": {
+      "mode": "primary",
+      "color": "#e64980",
+      "description": "Routes complex work across specialized subagents"
+    },
+    "code-reviewer": {
+      "mode": "subagent",
+      "color": "#ff6b6b",
+      "temperature": 0.1
+    },
+    "debug-agent": {
+      "mode": "subagent",
+      "color": "#f0a500",
+      "temperature": 0.2
+    },
+    "test-writer": {
+      "mode": "subagent",
+      "color": "#51cf66",
+      "temperature": 0.2
+    },
+    "macos-toolsmith": {
+      "mode": "subagent",
+      "color": "#748ffc",
+      "temperature": 0.3
+    },
+    "web-researcher": {
+      "mode": "subagent",
+      "color": "#20c997",
+      "temperature": 0.3
+    },
+    "docs-writer": {
+      "mode": "subagent",
+      "color": "#9775fa",
+      "temperature": 0.2
+    },
+    "vault-curator": {
+      "mode": "subagent",
+      "color": "#f06595",
+      "temperature": 0.2
+    }
+  }
+}
